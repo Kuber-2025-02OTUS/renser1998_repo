@@ -5,7 +5,7 @@ metadata:
   namespace: homework
   labels:
     type: webserver
-  name: nginx
+  name: webserver-python
 spec:
   initContainers:
   - name: init
@@ -20,17 +20,13 @@ spec:
       name: volume-shared
 
   containers:
-  - name: nginx
-    image: nginx
+  - name: webserver-container
+    image: python:3.8-slim
     ports:
     - containerPort: 8000
     volumeMounts:
     - mountPath: /homework
       name: volume-shared
-      
-    - mountPath: /etc/nginx/conf.d 
-      readOnly: true
-      name: nginx-conf
     lifecycle:
       postStart:
         exec:
@@ -38,17 +34,10 @@ spec:
       preStop:
         exec:
           command: ["/bin/sh", "-c", "rm /homework/index.html"]
-  dnsPolicy: Default
-
+    command: ["/bin/sh", "-c", "python -m http.server 8000 --directory /homework"]
   volumes:
   - name: volume-shared
     emptyDir: {}
 
-  - name: nginx-conf
-    configMap:
-      name: nginx-conf 
-      items:
-        - key: nginx.conf
-          path: nginx.conf
 
         
