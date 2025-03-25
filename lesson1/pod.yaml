@@ -31,7 +31,13 @@ spec:
     - mountPath: /etc/nginx/conf.d 
       readOnly: true
       name: nginx-conf
-
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo 'helloworld' > /homework/test"]
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "rm /homework/index.html"]
   dnsPolicy: Default
 
   volumes:
