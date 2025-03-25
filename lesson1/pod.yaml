@@ -1,0 +1,43 @@
+
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: homework
+  labels:
+    type: webserver
+  name: webserver-python
+spec:
+  initContainers:
+  - name: init
+    image: busybox:1.28
+    command:
+    - wget
+    - "-O"
+    - "/init/index.html"
+    - www.stackoverflow.com
+    volumeMounts:
+    - mountPath: /init
+      name: volume-shared
+
+  containers:
+  - name: webserver-container
+    image: python:3.8-slim
+    ports:
+    - containerPort: 8000
+    volumeMounts:
+    - mountPath: /homework
+      name: volume-shared
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo 'helloworld' > /homework/test"]
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "rm /homework/index.html"]
+    command: ["/bin/sh", "-c", "python -m http.server 8000 --directory /homework"]
+  volumes:
+  - name: volume-shared
+    emptyDir: {}
+
+
+        
