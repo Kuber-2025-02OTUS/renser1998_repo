@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: homework
+  labels:
+    type: deployment
+  name: webserver-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+      app: python-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: python-server  
+    spec:  
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: homework
+                operator: In
+                values: 
+                - 'true'
+      initContainers:
+      - name: init
+        image: busybox:1.28
+        command:
+        - wget
+        - "-O"
+        - "/init/index.html"
+        - www.stackoverflow.com
+        volumeMounts:
+        - mountPath: /init
+          name: volume-shared
+
+      containers:
+      - name: webserver-container
+        image: python:3.8-slim
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - mountPath: /homework
+          name: volume-shared
+        readinessProbe:
+          exec:
+            command: ["/bin/sh", "-c",  "ls /homework/index.html"]
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo 'helloworld' > /homework/test"]
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "rm /homework/index.html"]
+        command: ["/bin/sh", "-c", "python -m http.server 8000 --directory /homework"]
+      volumes:
+      - name: volume-shared
+        emptyDir: {}
+
