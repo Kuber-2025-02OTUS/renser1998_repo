@@ -9,7 +9,7 @@ spec:
   replicas: 3
   selector:
     matchLabels: 
-      app: python-server
+      app: web-server-nginx
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        app: python-server  
+        app: web-server-nginx
     spec:  
       affinity:
         nodeAffinity:

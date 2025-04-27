@@ -5,7 +5,7 @@ metadata:
   name: web-server-service
 spec:
   selector:
-    app: python-server
+    app: web-server-nginx
   ports:
     - protocol: TCP
       port: 8000
