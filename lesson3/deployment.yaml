@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: homework
+  labels:
+    type: deployment
+  name: webserver-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+      app: web-server-nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: web-server-nginx
+    spec:  
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: homework
+                operator: In
+                values: 
+                - 'true'
+      initContainers:
+      - name: init
+        image: busybox:1.28
+        command:
+        - wget
+        - "-O"
+        - "/init/index.html"
+        - www.stackoverflow.com
+        volumeMounts:
+        - mountPath: /init
+          name: volume-shared
+
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 8000
+          name: http-web-pod
+        volumeMounts:
+        - mountPath: /homework
+          name: volume-shared
+        - mountPath: /etc/nginx/conf.d/
+          name: nginx-conf
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo 'helloworld' > /homework/test"]
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "rm /homework/index.html"]
+
+
+      volumes:
+      - name: volume-shared
+        emptyDir: {}
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+          items:
+          - key: default.conf
+            path: default.conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: homework
+data:
+  default.conf: |
+    server {
+      listen 8000;
+      root /homework;
+      index index.html;
+      location / {
+        try_files $uri $uri/ /index.html;     
+      }
+    }
