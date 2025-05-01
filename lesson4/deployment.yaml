@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: homework
+  labels:
+    type: deployment
+  name: webserver-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+      app: web-server-nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: web-server-nginx
+    spec:  
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: homework
+                operator: In
+                values: 
+                - 'true'
+      initContainers:
+      - name: init
+        image: busybox:1.28
+        command:
+        - wget
+        - "-O"
+        - "/init/index.html"
+        - www.stackoverflow.com
+        volumeMounts:
+        - mountPath: /init
+          name: volume-shared #change
+
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 8000
+          name: http-web-pod
+
+        volumeMounts:
+        - mountPath: /homework #change
+          name: volume-shared
+
+        - mountPath: /etc/nginx/conf.d/
+          name: nginx-conf
+
+        - mountPath: /homework/conf
+          name: homework-conf
+
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo 'helloworld' > /homework/test"]
+
+
+      volumes:
+      - name: volume-shared
+        persistentVolumeClaim:
+          claimName: homework-pvc
+
+      - name: nginx-conf
+        configMap:
+          name: cm-homework
+          items:
+          - key: nginx.conf
+            path: default.conf
+
+      - name: homework-conf
+        configMap:
+          name: cm-homework
+          items:
+          - key: homework-conf
+            path: file

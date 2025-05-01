@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: homework
+  name: web-server-service
+spec:
+  selector:
+    app: web-server-nginx
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: http-web-pod
+      name: http-web-svc
