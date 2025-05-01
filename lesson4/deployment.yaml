@@ -33,10 +33,13 @@ spec:
       - name: init
         image: busybox:1.28
         command:
-        - wget
-        - "-O"
-        - "/init/index.html"
-        - www.stackoverflow.com
+        - sh
+        - -c
+        - |
+          echo "1. removing everything except conf file"
+          find /init -mindepth 1 -maxdepth 1 -not -name 'conf' -exec rm -rf {} \;
+          echo "2. downloading web page"
+          wget -O /init/index.html www.stackoverflow.com
         volumeMounts:
         - mountPath: /init
           name: volume-shared #change
