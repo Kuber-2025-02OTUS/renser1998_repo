@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: homework
+  labels:
+    type: deployment
+  name: webserver-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+      app: web-server-nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: web-server-nginx
+    spec:
+      serviceAccountName: monitoring
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: homework
+                operator: In
+                values: 
+                - 'true'
+      initContainers:
+      - name: init
+        image: busybox:1.28
+        command:
+        - sh
+        - -c
+        - |
+          echo "1. removing everything except conf file"
+          find /init -mindepth 1 -maxdepth 1 -not -name 'conf' -exec rm -rf {} \;
+          echo "2. downloading web page"
+          wget -O /init/index.html www.stackoverflow.com
+        volumeMounts:
+        - mountPath: /init
+          name: volume-shared
+
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 8000
+          name: http-web-pod
+
+        volumeMounts:
+        - mountPath: /homework #change
+          name: volume-shared
+
+        - mountPath: /etc/nginx/conf.d/
+          name: nginx-conf
+
+        - mountPath: /homework/conf
+          name: homework-conf
+
+
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        lifecycle:
+          postStart:
+            exec:
+              command: 
+              - sh
+              - -c
+              - |
+                echo "Curl metrics request"
+                curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+                -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+                https://kubernetes.default.svc/metrics > /homework/metrics.html
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "rm /homework/index.html"]
+
+      volumes:
+      - name: volume-shared
+        persistentVolumeClaim:
+          claimName: homework-pvc
+
+      - name: nginx-conf
+        configMap:
+          name: cm-homework
+          items:
+          - key: nginx.conf
+            path: default.conf
+
+      - name: homework-conf
+        configMap:
+          name: cm-homework
+          items:
+          - key: homework-conf
+            path: file
