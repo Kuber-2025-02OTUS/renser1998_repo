@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.storage.persistentVolumeClaim.name  }}
+  namespace: {{ include "renapp.namespace" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storage.persistentVolumeClaim.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.persistentVolumeClaim.storage }}
