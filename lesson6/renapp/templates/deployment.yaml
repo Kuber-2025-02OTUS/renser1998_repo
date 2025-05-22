@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "renapp.fullname" . }}
+  namespace: {{ include "renapp.namespace" . }}
+  labels:
+    {{- include "renapp.labels" . | nindent 4 }}
+    type: deployment
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "renapp.selectorLabels" . | nindent 6 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "renapp.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.monitoring.name }}
+      initContainers:
+      - name: {{ .Values.initContainer.name }}
+        image: {{ .Values.initContainer.image }}
+        command:
+        - sh
+        - -c
+        - |
+          echo "1. removing everything except conf file"
+          find /init -mindepth 1 -maxdepth 1 -not -name 'conf' -exec rm -rf {} \;
+          echo "2. downloading web page"
+          wget -O /init/index.html www.stackoverflow.com
+        volumeMounts:
+        - mountPath: /init
+          name: volume-shared
+
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          ports:
+            - name: http-web-pod
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+
+          volumeMounts:
+          - mountPath: /homework
+            name: volume-shared
+          - mountPath: /etc/nginx/conf.d/
+            name: nginx-conf
+          - mountPath: /homework/conf
+            name: homework-conf
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          {{- end }}
+          lifecycle:
+            postStart:
+              exec:
+                command: 
+                - sh
+                - -c
+                - |
+                  echo "Curl metrics request"
+                  curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+                  -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+                  https://kubernetes.default.svc/metrics > /homework/metrics.html
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "rm /homework/index.html"]
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+        
+      volumes:
+      - name: volume-shared
+        persistentVolumeClaim:
+          claimName: {{ .Values.storage.persistentVolumeClaim.name }}
+
+      - name: nginx-conf
+        configMap:
+          name: {{ .Values.homework_cm.name }}
+          items:
+          - key: nginx.conf
+            path: default.conf
+
+      - name: homework-conf
+        configMap:
+          name: {{ .Values.homework_cm.name }}
+          items:
+          - key: homework-conf
+            path: file  
+
+      # {{- with .Values.volumes }}
+      # volumes:
+      #   {{- toYaml . | nindent 8 }}
+      # {{- end }}
+
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,10 @@
+image.tag: latest 
+broker:
+  replicaCount: 1
+listeners:
+  client:
+    protocol: PLAINTEXT
+    name: CLIENT
+  interbroker:
+    protocol: PLAINTEXT 
+    name: INTERNAL

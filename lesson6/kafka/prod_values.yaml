@@ -1,0 +1,10 @@
+image.tag: latest
+broker:
+  replicaCount: 5
+listeners:
+  client:
+    protocol: SASL_PLAINTEXT
+    name: CLIENT
+  interbroker:
+    protocol: SASL_PLAINTEXT
+    name: CLIENT
