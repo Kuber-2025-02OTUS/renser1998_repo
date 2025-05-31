@@ -10,16 +10,24 @@ metadata:
   name: crd-role
 rules:
 - apiGroups: ["apps"]
-  resources: ["deployments","deployments/status"]
-  verbs: ["get", "watch", "create", "delete", "get", "list", "update"]
+  resources: ["deployments",]
+  verbs: ["get", "create", "delete"]
+
+- apiGroups: ["apps"] # for gettting replica's status
+  resources: ["deployments/status"] 
+  verbs: ["get"]
 
 - apiGroups: [""]
-  resources: ["pods", "services", "persistentvolumeclaims", "persistentvolumes", "events"]
-  verbs: ["create", "update", "delete", "get", "list", "watch"]
+  resources: ["pods", "services", "persistentvolumeclaims", "persistentvolumes"] 
+  verbs: ["create", "delete"]
+
+- apiGroups: [""] #to post logs
+  resources: ["events"]
+  verbs: ["create"]
 
 - apiGroups: ["otus.homework"]
   resources: ["mysqls"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
+  verbs: ["create", "list", "get", "watch","delete", "patch", "update"] 
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
