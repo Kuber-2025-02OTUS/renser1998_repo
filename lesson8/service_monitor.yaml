@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mynginx-servicemonitor
+  labels:
+    app: mynginx-servicemonitor
+spec:
+  selector:
+    matchLabels:
+      app: prometheus-exporter-service
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
