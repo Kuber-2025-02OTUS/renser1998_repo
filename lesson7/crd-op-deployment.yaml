@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: mysql-deployment-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-operator
+  template:
+    metadata:
+      labels:
+        app: mysql-operator
+    spec:
+      serviceAccountName: sa-crd
+      containers:
+      - name: mysql-operator
+        image: roflmaoinmysoul/mysql-operator:1.0.0
+        env:
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        ports:
+          - containerPort: 8080
+            protocol: TCP
