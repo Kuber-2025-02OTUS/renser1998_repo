@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mynginx-deployment
+  namespace: homework
   labels:
     app: mynginx
 spec:
@@ -16,6 +17,7 @@ spec:
     spec:
       containers:
       - name: mynginx
-        image: mynginx
+        image: mynginx:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080

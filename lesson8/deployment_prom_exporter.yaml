@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-exporter-deployment
+  namespace: homework
   labels:
     app: prometheus-exporter
 spec:
@@ -21,4 +22,4 @@ spec:
         - containerPort: 9113
           name: metrics
         args:
-          - --nginx.scrape-uri=http://mynginx-service:8080/status
+          - --nginx.scrape-uri=http://mynginx-service:80/nginx_status
