@@ -1,0 +1,153 @@
+# Extracted affinity and tolerations sections from values.yaml
+
+# Example for prometheus
+prometheus:
+  prometheusSpec:
+    podAntiAffinity: ""
+    affinity: 
+        nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                    - key: "node-role"
+                      operator: In
+                      values:
+                      - infra
+    tolerations: 
+        - key: "node-role"
+          operator: "Equal"
+          value: "infra"
+          effect: "NoSchedule"
+
+# Example for alertmanager
+alertmanager:
+  alertmanagerSpec:
+    podAntiAffinity: ""
+    affinity: 
+        nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                    - key: "node-role"
+                      operator: In
+                      values:
+                      - infra
+    tolerations: 
+        - key: "node-role"
+          operator: "Equal"
+          value: "infra"
+          effect: "NoSchedule"
+
+
+# Example for grafana
+grafana:
+  affinity: 
+      podAntiAffinity: {}
+      nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "node-role"
+                    operator: In
+                    values:
+                    - infra
+  tolerations: 
+      - key: "node-role"
+        operator: "Equal"
+        value: "infra"
+        effect: "NoSchedule"
+  imageRenderer:
+    affinity: 
+        nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                    - key: "node-role"
+                      operator: In
+                      values:
+                      - infra
+    tolerations: 
+        - key: "node-role"
+          operator: "Equal"
+          value: "infra"
+          effect: "NoSchedule"
+prometheusOperator:
+  affinity: 
+      nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "node-role"
+                    operator: In
+                    values:
+                    - infra
+  tolerations: 
+      - key: "node-role"
+        operator: "Equal"
+        value: "infra"
+        effect: "NoSchedule"
+  admissionWebhooks:
+    deployment:
+      affinity: 
+          nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: "node-role"
+                        operator: In
+                        values:
+                        - infra
+      tolerations: 
+          - key: "node-role"
+            operator: "Equal"
+            value: "infra"
+            effect: "NoSchedule"
+    patch:
+      affinity: 
+          nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: "node-role"
+                        operator: In
+                        values:
+                        - infra
+      tolerations: 
+          - key: "node-role"
+            operator: "Equal"
+            value: "infra"
+            effect: "NoSchedule"
+
+
+thanosRuler:
+  thanosRulerSpec:
+    podAntiAffinity: ""
+  affinity: 
+      nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "node-role"
+                    operator: In
+                    values:
+                    - infra
+  tolerations: 
+      - key: "node-role"
+        operator: "Equal"
+        value: "infra"
+        effect: "NoSchedule"
+kube-state-metrics:
+  affinity: 
+      nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "node-role"
+                    operator: In
+                    values:
+                    - infra
+  tolerations: 
+      - key: "node-role"
+        operator: "Equal"
+        value: "infra"
+        effect: "NoSchedule"

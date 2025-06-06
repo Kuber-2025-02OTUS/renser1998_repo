@@ -1,0 +1,291 @@
+promtail:
+    tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+      
+loki-distributed:
+    tolerations: 
+        - key: "node-role"
+          operator: "Equal"
+          value: "infra"
+          effect: "NoSchedule"
+
+    affinity: |
+        podAntiAffinity: {}
+        nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                    - key: "node-role"
+                      operator: In
+                      values:
+                      - infra
+    loki:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    gateway:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    memcached:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    memcachedExporter:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    ingester:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    querier:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    qualifier:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    queryFrontend:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    queryScheduler:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    ruler:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    tableManager:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    compactor:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    distributor:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    indexGateway:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+
+    memcachedIndexQueries:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
+    memcachedIndexWrites:
+        tolerations: 
+            - key: "node-role"
+              operator: "Equal"
+              value: "infra"
+              effect: "NoSchedule"
+        affinity: |
+            podAntiAffinity: {}
+            nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: "node-role"
+                          operator: In
+                          values:
+                          - infra
