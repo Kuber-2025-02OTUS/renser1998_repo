@@ -1,0 +1,62 @@
+global:
+    bucketname: otus-cluster-storage-s3
+    serviceaccountawskeyvalue: ''
+    serviceaccountawskeyvalue_generated:
+        accessKeyID: string
+        secretAccessKey: string
+promtail:
+    image:
+        registry: cr.yandex/yc-marketplace
+        repository: yandex-cloud/grafana/loki/promtail1724340579580929049903575878834428036439571203368
+        tag: "3.0.0"
+        pullPolicy: Always
+    enabled: true
+    config:
+        clients:
+            - url: http://loki-loki-distributed-gateway/loki/api/v1/push
+loki-distributed:
+    loki:
+        configAsSecret: true
+        image:
+            registry: cr.yandex/yc-marketplace
+            repository: yandex-cloud/grafana/loki/loki1724340579580929049903575878834428036439571203368
+            tag: "2.9.8"
+            pullPolicy: Always
+        structuredConfig:
+            storage_config:
+                aws:
+                    endpoint: storage.yandexcloud.net
+                    bucketnames: "{{.Values.global.bucketname}}"
+                    region: ru-central1
+                    access_key_id: "{{ (fromJson .Values.global.serviceaccountawskeyvalue).access_key.key_id }}"
+                    secret_access_key: "{{ (fromJson .Values.global.serviceaccountawskeyvalue).secret }}"
+                    s3forcepathstyle: true
+                boltdb_shipper:
+                    shared_store: s3
+            schema_config:
+                configs:
+                    - from: "2020-09-07"
+                      store: boltdb-shipper
+                      object_store: aws
+                      schema: v11
+                      index:
+                        prefix: loki_index_
+                        period: 24h
+    gateway:
+        image:
+            registry: cr.yandex/yc-marketplace
+            repository: yandex-cloud/grafana/loki/nginx-unprivileged1724340579580929049903575878834428036439571203368
+            tag: 1.20.2-alpine
+            pullPolicy: Always
+    memcached:
+        image:
+            registry: cr.yandex/yc-marketplace
+            repository: yandex-cloud/grafana/loki/memcached1724340579580929049903575878834428036439571203368
+            tag: 1.6.21-alpine
+            pullPolicy: Always
+    memcachedExporter:
+        image:
+            registry: cr.yandex/yc-marketplace
+            repository: yandex-cloud/grafana/loki/memcached-exporter1724340579580929049903575878834428036439571203368
+            tag: v0.13.0
+            pullPolicy: Always
