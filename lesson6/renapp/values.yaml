@@ -68,7 +68,7 @@ storage:
     parameters:
       type: network-hdd
       csi.storage.k8s.io/fstype: ext4
-    allowVolumeExpansion: false
+    allowVolumeExpansion: true
     reclaimPolicy: Retain
 
 homework_cm:
