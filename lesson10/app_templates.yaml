@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-templating
+  namespace: argo-cd
+spec:
+  project: otus
+  source:
+    repoURL: https://github.com/Kuber-2025-02OTUS/renser1998_repo.git
+    targetRevision: kubernetes-templating
+    path: lesson6/renapp
+    helm:
+      parameters:
+        - name: replicaCount
+          value: "3"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: homeworkhelm
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  ignoreDifferences:
+  - kind: PersistentVolumeClaim
+    jsonPointers:
+    - /spec/volumeName
+    - /spec/storageClassName
