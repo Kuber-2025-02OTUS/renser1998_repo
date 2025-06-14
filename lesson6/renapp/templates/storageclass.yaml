@@ -11,3 +11,5 @@ metadata:
 provisioner: {{ .Values.storage.storageClass.provisioner }}
 reclaimPolicy: {{ .Values.storage.storageClass.reclaimPolicy }}
 volumeBindingMode: {{ .Values.storage.storageClass.volumeBindingMode }}
+parameters: {{- toYaml .Values.storage.storageClass.parameters | nindent 4 }}
+allowVolumeExpansion: {{ .Values.storage.storageClass.allowVolumeExpansion }}

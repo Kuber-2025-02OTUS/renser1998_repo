@@ -62,9 +62,14 @@ storage:
   storageClass:
     enabled: true
     name: kb-class-storage
-    provisioner: k8s.io/minikube-hostpath
-    reclaimPolicy: Retain
+
+    provisioner: disk-csi-driver.mks.ycloud.io
     volumeBindingMode: Immediate
+    parameters:
+      type: network-hdd
+      csi.storage.k8s.io/fstype: ext4
+    allowVolumeExpansion: false
+    reclaimPolicy: Retain
 
 homework_cm:
   name: homework-cm
