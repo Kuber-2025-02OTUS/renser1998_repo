@@ -64,7 +64,7 @@ storage:
     name: kb-class-storage
 
     provisioner: disk-csi-driver.mks.ycloud.io
-    volumeBindingMode: Immediate
+    volumeBindingMode: WaitForFirstConsumer
     parameters:
       type: network-hdd
       csi.storage.k8s.io/fstype: ext4
