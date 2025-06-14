@@ -69,7 +69,7 @@ storage:
       type: network-hdd
       csi.storage.k8s.io/fstype: ext4
     allowVolumeExpansion: true
-    reclaimPolicy: Retain
+    reclaimPolicy: Delete
 
 homework_cm:
   name: homework-cm
