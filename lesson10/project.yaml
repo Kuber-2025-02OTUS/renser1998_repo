@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: otus
+  namespace: argo-cd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Otus Project
+
+  sourceRepos:
+  - '*'
+  destinations:
+  - namespace: homework
+    server: https://kubernetes.default.svc
+    name: in-cluster
+  - namespace: homeworkhelm
+    server: https://kubernetes.default.svc
+    name: in-cluster
+
+
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true
