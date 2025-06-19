@@ -28,8 +28,15 @@
     ```bash
     vault operator unseal
     ```
+5. Добавляем секрет в вебке vault /otus/cred
 
-5. Входим в Vault:
+6. Прописываем политику otus-policy
+    ```hcl
+    path "/otus/cred" {
+        capabilities = ["read", "list"]
+    }
+    ```
+7. Входим в Vault:
     ```bash
     vault login
     Token (will be hidden): 
