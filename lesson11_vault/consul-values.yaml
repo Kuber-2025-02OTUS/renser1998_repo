@@ -1,0 +1,6 @@
+global:
+  imageConsulDataplane: hashicorp/consul-dataplane 
+  imageK8S: hashicorp/consul-k8s-control-plane
+  image: hashicorp/consul
+server:
+  replicas: 3
