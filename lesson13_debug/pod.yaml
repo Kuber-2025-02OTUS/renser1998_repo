@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: homework
+  labels:
+    type: pod
+  name: webserver-pod
+spec:  
+  shareProcessNamespace: true
+  securityContext:
+    seccompProfile:
+      type: Unconfined
+  containers:
+  - name: nginx-distroless-container
+    image: kyos0109/nginx-distroless
+    securityContext:
+      runAsUser: 0
+      capabilities:
+        add:
+        - CAP_SYS_ADMIN
+      seccompProfile:
+        type: Unconfined
+    ports:
+    - containerPort: 80
+      name: http-web-pod
